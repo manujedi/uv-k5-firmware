@@ -144,5 +144,7 @@ void free(void *ptr) {
         if (!((header *) elem)->prev)
             head = 0;
 
+        //brk(elem);
+        _curr_brk = elem;           //new
     }
 }
