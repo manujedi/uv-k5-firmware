@@ -1,5 +1,7 @@
 /* Copyright 2023 Dual Tachyon
  * https://github.com/DualTachyon
+ * Copyright 2023 Manuel Jedinger
+ * https://github.com/manujedi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +23,20 @@
 
 void SYSTEM_DelayMs(uint32_t Delay)
 {
-	SYSTICK_DelayUs(Delay * 1000);
+    SYSTICK_DelayUs(Delay * 1000);
 }
 
-void SYSTEM_ConfigureClocks(void)
+__attribute__ ((section (".sram_overlay"))) void SYSTEM_ConfigureClocks(void)
 {
-	// Set source clock from external crystal
-	PMU_SRC_CFG = (PMU_SRC_CFG & ~(PMU_SRC_CFG_RCHF_SEL_MASK | PMU_SRC_CFG_RCHF_EN_MASK))
-		| PMU_SRC_CFG_RCHF_SEL_BITS_48MHZ
-		| PMU_SRC_CFG_RCHF_EN_BITS_ENABLE;
+    // Set source clock from external crystal
+    PMU_SRC_CFG = (PMU_SRC_CFG & ~(PMU_SRC_CFG_RCHF_SEL_MASK | PMU_SRC_CFG_RCHF_EN_MASK))
+                  | PMU_SRC_CFG_RCHF_SEL_BITS_48MHZ
+                  | PMU_SRC_CFG_RCHF_EN_BITS_ENABLE;
 
-	// Divide by 2
-	SYSCON_CLK_SEL = SYSCON_CLK_SEL_DIV_BITS_2;
+    // Divide by 2
+    SYSCON_CLK_SEL = SYSCON_CLK_SEL_DIV_BITS_2;
 
-	// Disable division clock gate
-	SYSCON_DIV_CLK_GATE = (SYSCON_DIV_CLK_GATE & ~SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_MASK) | SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_BITS_DISABLE;
+    // Disable division clock gate
+    SYSCON_DIV_CLK_GATE = (SYSCON_DIV_CLK_GATE & ~SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_MASK) | SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_BITS_DISABLE;
 }
 

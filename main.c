@@ -44,6 +44,7 @@
 #include "misc.h"
 #include "radio.h"
 #include "settings.h"
+#include "malloc.h"
 
 static const char Version[] = "UV-K5 Firmware, v0.01 Open Edition\r\n";
 
@@ -202,7 +203,22 @@ void Main(void)
 	// Show some signs of life
 	FLASHLIGHT_Init();
 
-	bool Open = false;
+    //malloc tests
+    uint32_t* array1 = malloc(10*sizeof(uint32_t));
+    array1[3] = 0x1;
+
+    uint32_t* array2 = malloc(10*sizeof(uint32_t));
+    array2[3] = 0x1;
+
+    uint32_t* array3 = malloc(10*sizeof(uint32_t));
+    array3[3] = 0x1;
+
+    free(array1);
+    free(array2);
+    free(array3);
+
+
+    bool Open = false;
 	uint8_t Flag = false;
 	while (1) {
 		uint16_t RSSI = BK4819_GetRSSI();

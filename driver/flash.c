@@ -1,5 +1,7 @@
 /* Copyright 2023 Dual Tachyon
  * https://github.com/DualTachyon
+ * Copyright 2023 Manuel Jedinger
+ * https://github.com/manujedi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +19,18 @@
 #include "driver/flash.h"
 #include "sram-overlay.h"
 
-void FLASH_Init(FLASH_READ_MODE ReadMode)
+__attribute__ ((section (".sram_overlay")))  void FLASH_Init(FLASH_READ_MODE ReadMode)
 {
-	overlay_FLASH_Init(ReadMode);
+    overlay_FLASH_Init(ReadMode);
 }
 
-void FLASH_ConfigureTrimValues(void)
+__attribute__ ((section (".sram_overlay"))) void FLASH_ConfigureTrimValues(void)
 {
-	overlay_FLASH_ConfigureTrimValues();
+    overlay_FLASH_ConfigureTrimValues();
 }
 
-uint32_t FLASH_ReadNvrWord(uint32_t Address)
+__attribute__ ((section (".sram_overlay"))) uint32_t FLASH_ReadNvrWord(uint32_t Address)
 {
-	return overlay_FLASH_ReadNvrWord(Address);
+    return overlay_FLASH_ReadNvrWord(Address);
 }
 
