@@ -14,18 +14,13 @@
  *     limitations under the License.
  */
 
-#ifndef FIRMWARE_APP_USERAPPS_H
-#define FIRMWARE_APP_USERAPPS_H
+#ifndef FIRMWARE_UI_USERAPP_RANKING_H
+#define FIRMWARE_UI_USERAPP_RANKING_H
 
-#include <string.h>
 #include "stdint.h"
-#include "driver/keyboard.h"
+#include "app/userapps.h"
 
-extern char menu_items[7][15];
+void USERAPPS_ranking_draw(uint8_t offset, uint8_t rssi_val[200]);
+void USERAPPS_ranking_progress(uint8_t percent);
 
-void USERAPPS_init(void);
-void USERAPPS_startapp(uint8_t selection);
-KEY_Code_t USERAPPS_GetInput(void);
-void USERAPPS_loop(void);
-
-#endif //FIRMWARE_APP_USERAPPS_H
+#endif //FIRMWARE_UI_USERAPP_RANKING_H

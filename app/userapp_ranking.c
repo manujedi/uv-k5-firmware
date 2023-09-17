@@ -14,72 +14,62 @@
  *     limitations under the License.
  */
 
-#include "userapps.h"
+#include "app/userapps.h"
+#include "app/userapp_ranking.h"
+#include "ui/userapp_ranking.h"
 #include "driver/keyboard.h"
 #include "ui/userapps.h"
 #include "driver/system.h"
-#include "userapp_ranking.h"
+#include "radio.h"
+#include "driver/uart.h"
+#include "external/printf/printf.h"
+#include "settings.h"
+#include "misc.h"
+#include "driver/bk4819-regs.h"
+#include "driver/bk4819.h"
 
-char menu_items[7][15] = {
-        "Contrast",
-        "Bridge",
-        "Ranking",
-        "Todo",
-        "Todo",
-        "Todo",
-        "Todo",
-};
 
-KEY_Code_t USERAPPS_GetInput(void){
-    static KEY_Code_t currentKey;
-    static KEY_Code_t lastKey = KEY_EXIT;   //eat the first exit key
-    currentKey = KEYBOARD_Poll();
+void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
 
-    static uint8_t scroll = 20;
+    for (uint8_t channel = 0; channel < 200; channel++) {
+        printf("c %i\r\n", channel);
 
-    if(lastKey != currentKey) {
-        lastKey = currentKey;
-        scroll = 20;
-        return currentKey;
+        gEeprom.MrChannel[gEeprom.TX_CHANNEL] = channel;
+        gEeprom.ScreenChannel[gEeprom.TX_CHANNEL] = channel;
+
+        RADIO_ConfigureChannel(0, VFO_CONFIGURE_RELOAD);
+        RADIO_SetupRegisters(true);
+
+        //reset rssi (thanks to fagci)
+        uint32_t Reg = BK4819_ReadRegister(BK4819_REG_30);
+        Reg &= ~1;
+        BK4819_WriteRegister(BK4819_REG_30, Reg);
+        Reg |= 1;
+        BK4819_WriteRegister(BK4819_REG_30, Reg);
+
+        SYSTEM_DelayMs(10);
+
+        int32_t rssi = (((BK4819_GetRSSI() >> 1) & 0xFF) - 160) * -1;
+
+        rssi_val[channel] = rssi & 0xFF;
+
+        USERAPPS_ranking_progress(channel / 2);
     }
-    if(currentKey == KEY_INVALID)
-        scroll = 20;
-    else
-        scroll = scroll == 0 ? 0 : scroll-1;
-
-    if(scroll == 0) {
-        scroll = 5; //scrollspeed
-        return currentKey;
-    }
-
-    return KEY_INVALID;
 }
 
-void USERAPPS_startapp(uint8_t selection){
-    switch (selection) {
-        case 0:
-            //USERAPP_contrast_init
-            break;
-        case 1:
-            //USERAPP_bridge_init();
-            break;
-        case 2:
-            USERAPP_ranking_init();
-            break;
-        default:
-            break;
-    }
 
+void USERAPP_ranking_init() {
+    USERAPP_ranking_loop();
 }
 
-void USERAPPS_init(void){
-    USERAPPS_loop();
-}
-
-void USERAPPS_loop(void){
-    uint8_t selection = 0;
+void USERAPP_ranking_loop() {
 
     KEY_Code_t key = KEY_INVALID;
+
+    uint8_t rssi_val[200];
+    memset(rssi_val, 0, sizeof(rssi_val));
+
+    uint8_t selection = 0;
 
     while (key != KEY_EXIT) {
 
@@ -92,8 +82,7 @@ void USERAPPS_loop(void){
                 selection = selection == 0 ? 0 : selection - 1;
                 break;
             case KEY_DOWN:
-                if(selection < sizeof(menu_items)/sizeof(menu_items[0]) - 1)
-                    selection++;
+                selection = selection == 199 ? 199 : selection + 1;
                 break;
             case KEY_EXIT:
                 break;
@@ -110,13 +99,14 @@ void USERAPPS_loop(void){
             case KEY_INVALID:
                 break;
             case KEY_MENU:
-                USERAPPS_startapp(selection);
+                USERAPP_ranking_readChannelFreq(rssi_val);
                 break;
         }
 
-        USERAPPS_draw(selection);
+        USERAPPS_ranking_draw(selection, rssi_val);
         SYSTEM_DelayMs(10);
 
     }
+
 
 }

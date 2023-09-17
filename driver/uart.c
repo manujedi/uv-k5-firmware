@@ -15,6 +15,7 @@
  */
 
 #include <stdbool.h>
+#include <string.h>
 #include "bsp/dp32g030/dma.h"
 #include "bsp/dp32g030/syscon.h"
 #include "bsp/dp32g030/uart.h"
@@ -102,4 +103,3 @@ void UART_LogSend(const void *pBuffer, uint32_t Size)
 		UART_Send(pBuffer, Size);
 	}
 }
-
