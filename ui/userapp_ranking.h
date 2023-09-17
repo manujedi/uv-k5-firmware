@@ -20,7 +20,7 @@
 #include "stdint.h"
 #include "app/userapps.h"
 
-void USERAPPS_ranking_draw(uint8_t offset, uint8_t rssi_val[200]);
+void USERAPPS_ranking_draw(uint8_t offset, uint8_t rssi_val[200], uint8_t min_rssi_filter);
 void USERAPPS_ranking_progress(uint8_t percent);
 
 #endif //FIRMWARE_UI_USERAPP_RANKING_H

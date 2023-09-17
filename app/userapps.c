@@ -21,13 +21,7 @@
 #include "userapp_ranking.h"
 
 char menu_items[7][15] = {
-        "Contrast",
-        "Bridge",
         "Ranking",
-        "Todo",
-        "Todo",
-        "Todo",
-        "Todo",
 };
 
 KEY_Code_t USERAPPS_GetInput(void){
@@ -48,7 +42,7 @@ KEY_Code_t USERAPPS_GetInput(void){
         scroll = scroll == 0 ? 0 : scroll-1;
 
     if(scroll == 0) {
-        scroll = 5; //scrollspeed
+        scroll = 2; //scrollspeed
         return currentKey;
     }
 
@@ -58,12 +52,6 @@ KEY_Code_t USERAPPS_GetInput(void){
 void USERAPPS_startapp(uint8_t selection){
     switch (selection) {
         case 0:
-            //USERAPP_contrast_init
-            break;
-        case 1:
-            //USERAPP_bridge_init();
-            break;
-        case 2:
             USERAPP_ranking_init();
             break;
         default:

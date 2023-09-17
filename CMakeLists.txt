@@ -16,10 +16,10 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Enable features
-set(ENABLE_AIRCOPY 0)
-set(ENABLE_ALARM 0)
-set(ENABLE_FMRADIO 0)
-set(ENABLE_NOAA 0)
+set(ENABLE_AIRCOPY 1)
+set(ENABLE_ALARM 1)
+set(ENABLE_FMRADIO 1)
+set(ENABLE_NOAA 1)
 set(ENABLE_OVERLAY 0)
 set(ENABLE_SWD 1)
 set(ENABLE_TX1750 1)
