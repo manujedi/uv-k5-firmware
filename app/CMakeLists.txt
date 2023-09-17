@@ -27,4 +27,5 @@ target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/main.c
         ${CMAKE_CURRENT_SOURCE_DIR}/menu.c
         ${CMAKE_CURRENT_SOURCE_DIR}/scanner.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/userapps.c
 )
