@@ -24,26 +24,32 @@
 #include "driver/eeprom.h"
 
 
-void USERAPPS_ranking_draw(uint8_t offset, uint8_t rssi_val[200]){
+void USERAPPS_ranking_draw(uint8_t offset, uint8_t rssi_val[200], uint8_t min_rssi_filter){
     memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
     char String[24];
-    for (uint8_t i = 0; i < 6; ++i) {
+    uint8_t printed = 0;
+    for (uint8_t i = 0; i < 200 && printed < 6; ++i) {
         if((i+offset) >= 200)
             break;
+
+        if(rssi_val[i+offset] > min_rssi_filter)
+            continue;
 
         EEPROM_ReadBuffer(0x0F50 + ((i+offset) * 0x10), String + 0, 8);
         EEPROM_ReadBuffer(0x0F58 + ((i+offset) * 0x10), String + 8, 2);
 
         if(String[0] == 0 || String[0] == 0xFF) {
             sprintf(String, "CH-%03d", (i+offset) + 1);
-            UI_PrintStringSmall(String, 0, 128, i, 8, false);
+            UI_PrintStringSmall(String, 0, 128, printed, 8, false);
         } else {
-            UI_PrintStringSmall(String, 0, 128, i, 8, false);
+            UI_PrintStringSmall(String, 0, 128, printed, 8, false);
         }
         sprintf(String, "-%03idb", rssi_val[i+offset]);
-        UI_PrintStringSmall(String, 82, 128, i, 7, false);
-
+        UI_PrintStringSmall(String, 82, 128, printed, 7, false);
+        printed++;
     }
+    sprintf(String, "min -%03idb", min_rssi_filter);
+    UI_PrintStringSmall(String, 5, 128, 6, 7, false);
 
     ST7565_BlitFullScreen();
 }

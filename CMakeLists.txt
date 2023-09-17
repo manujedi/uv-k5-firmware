@@ -16,10 +16,10 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Enable features
-set(ENABLE_AIRCOPY 0)
-set(ENABLE_ALARM 0)
-set(ENABLE_FMRADIO 0)
-set(ENABLE_NOAA 0)
+set(ENABLE_AIRCOPY 1)
+set(ENABLE_ALARM 1)
+set(ENABLE_FMRADIO 1)
+set(ENABLE_NOAA 1)
 set(ENABLE_OVERLAY 0)
 set(ENABLE_SWD 1)
 set(ENABLE_TX1750 1)
@@ -170,4 +170,5 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMAND ${SIZE} $<TARGET_FILE:${PROJECT_NAME}.elf>
         COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
         COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+        COMMAND python3 ${CMAKE_SOURCE_DIR}/fw-pack.py ${BIN_FILE} ${GIT_HASH} ${PROJECT_NAME}.packed.bin
 )

@@ -32,6 +32,9 @@
 void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
 
     for (uint8_t channel = 0; channel < 200; channel++) {
+        if(channel != 0 && RADIO_FindNextChannel(channel, RADIO_CHANNEL_UP, false, 0) == 0)
+            continue;
+
         printf("c %i\r\n", channel);
 
         gEeprom.MrChannel[gEeprom.TX_CHANNEL] = channel;
@@ -54,6 +57,7 @@ void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
         rssi_val[channel] = rssi & 0xFF;
 
         USERAPPS_ranking_progress(channel / 2);
+
     }
 }
 
@@ -67,22 +71,48 @@ void USERAPP_ranking_loop() {
     KEY_Code_t key = KEY_INVALID;
 
     uint8_t rssi_val[200];
-    memset(rssi_val, 0, sizeof(rssi_val));
+    memset(rssi_val, 0xFF, sizeof(rssi_val));
 
     uint8_t selection = 0;
+    uint8_t min_rssi = 100;
+    bool updateUI = true;
 
     while (key != KEY_EXIT) {
 
         key = USERAPPS_GetInput();
 
         switch (key) {
-            case KEY_0 ... KEY_9:
+            case KEY_0:
+                break;
+            case KEY_1:
+                min_rssi -= 5;
+                updateUI = true;
+                break;
+            case KEY_2:
+                break;
+            case KEY_3:
+                break;
+            case KEY_4:
+                break;
+            case KEY_5:
+                break;
+            case KEY_6:
+                break;
+            case KEY_7:
+                min_rssi += 5;
+                updateUI = true;
+                break;
+            case KEY_8:
+                break;
+            case KEY_9:
                 break;
             case KEY_UP:
                 selection = selection == 0 ? 0 : selection - 1;
+                updateUI = true;
                 break;
             case KEY_DOWN:
                 selection = selection == 199 ? 199 : selection + 1;
+                updateUI = true;
                 break;
             case KEY_EXIT:
                 break;
@@ -100,12 +130,13 @@ void USERAPP_ranking_loop() {
                 break;
             case KEY_MENU:
                 USERAPP_ranking_readChannelFreq(rssi_val);
+                updateUI = true;
                 break;
         }
-
-        USERAPPS_ranking_draw(selection, rssi_val);
+        if(updateUI)
+            USERAPPS_ranking_draw(selection, rssi_val, min_rssi);
+        updateUI = false;
         SYSTEM_DelayMs(10);
-
     }
 
 
