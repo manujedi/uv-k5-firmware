@@ -278,15 +278,15 @@ static void MAIN_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
 #endif
 		if (gScanState == SCAN_OFF) {
 			if (gInputBoxIndex == 0) {
+                //We are doing nothing, hook exit key for app menu
+                //take over full system, too cluttered to make it clean
+                USERAPPS_init();
 				return;
 			}
 			gInputBoxIndex--;
 			gInputBox[gInputBoxIndex] = 10;
 			if (gInputBoxIndex == 0) {
 				gAnotherVoiceID = VOICE_ID_CANCEL;
-                //We are doing nothing, hook exit key for app menu
-                //take over full system, too cluttered to make it clean
-                USERAPPS_init();
 			}
 		} else {
 			SCANNER_Stop();

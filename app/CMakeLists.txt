@@ -28,4 +28,5 @@ target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/menu.c
         ${CMAKE_CURRENT_SOURCE_DIR}/scanner.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapps.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/userapp_ranking.c
 )

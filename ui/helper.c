@@ -1,4 +1,6 @@
-/* Copyright 2023 Dual Tachyon
+/* Copyright 2023 Manuel Jedinger
+ * https://github.com/manujedi
+ * Copyright 2023 Dual Tachyon
  * https://github.com/DualTachyon
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,6 +72,22 @@ void UI_GenerateChannelStringEx(char *pString, bool bShowPrefix, uint8_t Channel
 	}
 }
 
+void UI_PrintStringSmall(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t Width, bool bCentered)
+{
+    uint32_t i, Length;
+
+    Length = strlen(pString);
+    if (bCentered) {
+        Start += (((End - Start) - (Length * Width)) + 1) / 2;
+    }
+    for (i = 0; i < Length; i++) {
+        if (pString[i] >= ' ' && pString[i] < 0x7F) {
+            uint8_t Index = pString[i];
+            memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontSmall[Index][0], 8);
+        }
+    }
+}
+
 void UI_PrintString(const char *pString, uint8_t Start, uint8_t End, uint8_t Line, uint8_t Width, bool bCentered)
 {
 	uint32_t i, Length;
@@ -80,9 +98,9 @@ void UI_PrintString(const char *pString, uint8_t Start, uint8_t End, uint8_t Lin
 	}
 	for (i = 0; i < Length; i++) {
 		if (pString[i] >= ' ' && pString[i] < 0x7F) {
-			uint8_t Index = pString[i] - ' ';
-			memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontBig[Index][0], 8);
-			memcpy(gFrameBuffer[Line + 1] + (i * Width) + Start, &gFontBig[Index][8], 8);
+			uint8_t Index = pString[i];
+			memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontSmall[Index][0], 8);
+			//memcpy(gFrameBuffer[Line + 1] + (i * Width) + Start, &gFontBig[Index][8], 8);
 		}
 	}
 }
