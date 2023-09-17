@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "ui/inputbox.h"
 #include "ui/ui.h"
+#include "userapps.h"
 
 static void MAIN_Key_DIGITS(KEY_Code_t Key, bool bKeyPressed, bool bKeyHeld)
 {
@@ -283,6 +284,9 @@ static void MAIN_Key_EXIT(bool bKeyPressed, bool bKeyHeld)
 			gInputBox[gInputBoxIndex] = 10;
 			if (gInputBoxIndex == 0) {
 				gAnotherVoiceID = VOICE_ID_CANCEL;
+                //We are doing nothing, hook exit key for app menu
+                //take over full system, too cluttered to make it clean
+                USERAPPS_init();
 			}
 		} else {
 			SCANNER_Stop();
