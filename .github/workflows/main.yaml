@@ -6,29 +6,40 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: arm-none-eabi-gcc
-      uses: carlosperate/arm-none-eabi-gcc-action@v1
-      with:
-        release: '10.3-2021.10'
+      - name: arm-none-eabi-gcc
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '10.3-2021.10'
 
-    - name: Install Python dependencies
-      run: python -m pip install --upgrade pip crcmod
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip crcmod
 
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Submodules
-      run: git submodule update --init --recursive --depth 1
+      - name: Submodules
+        run: git submodule update --init --recursive --depth 1
 
-    - name: Make
-      run:  make
+      - name: CMake
+        run: cmake -DCMAKE_BUILD_TYPE=MinSizeDeb .
 
-    - name: size
-      run:  arm-none-eabi-size firmware
+      - name: Make
+        run: make
 
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: firmware
-        path: firmware*.bin
+      - name: size
+        run: arm-none-eabi-size firmware.elf
 
+      - name: symbols
+        run: arm-none-eabi-nm firmware.elf > symbols.txt
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware
+          path: firmware*.bin
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: symbols
+          path: symbols.txt
