@@ -68,6 +68,8 @@ set(CMAKE_OBJDUMP arm-none-eabi-objdump)
 set(SIZE arm-none-eabi-size)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
+message(${CMAKE_C_COMPILER})
+
 # project settings
 project(firmware ASM C)
 set(CMAKE_C_STANDARD 11)
@@ -82,7 +84,7 @@ execute_process(
 )
 
 
-add_compile_options(-mcpu=${MCPU} -Wall -Werror -fno-builtin -MMD)
+add_compile_options(-mcpu=${MCPU} -Wall -Werror -fno-builtin -MMD -fno-delete-null-pointer-checks)
 add_compile_options(-DPRINTF_INCLUDE_CONFIG_H)
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/firmware.ld)
@@ -90,31 +92,15 @@ add_link_options(-mcpu=${MCPU} -nostartfiles -Wl,-T ${LINKER_SCRIPT})
 
 add_compile_options(-DGIT_HASH=\"${GIT_HASH}\")
 
-
-if (CMAKE_C_COMPILER_VERSION VERSION_LESS "12.0.0")
-    message(WARNING "Newer GCC version recommended")
-    add_compile_options(-fno-delete-null-pointer-checks)
-else ()
-    add_compile_options(--param=min-pagesize=0)
-endif ()
-
-
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-    add_compile_options(-O2 -g)
-    MESSAGE("Min Size build")
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
     add_compile_options(-Os -DNDEBUG)
     MESSAGE("Min Size build")
 elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeDeb")
     add_compile_options(-Os -g)
     MESSAGE("Min Size build")
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    add_compile_options(-Og -g)
-    add_link_options(-g)
-    MESSAGE("Debug build")
 else ()
-    add_compile_options(-O2)
-    MESSAGE("Other build")
+    MESSAGE("Using Min Size build")
+    add_compile_options(-Os -g)
 endif ()
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
