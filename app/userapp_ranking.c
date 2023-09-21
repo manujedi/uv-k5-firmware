@@ -39,15 +39,6 @@ static void ResetRSSI() {
     BK4819_WriteRegister(BK4819_REG_30, Reg);
 }
 
-
-uint8_t GetRssi() {
-    SYSTICK_DelayUs(10);
-    int32_t rssi = (BK4819_GetRSSI() >> 1);
-    rssi -= 160;
-    rssi *= (-1);
-    return rssi & 0xFF;
-}
-
 void setF(uint32_t f) {
     BK4819_PickRXFilterPathBasedOnFrequency(f);
     BK4819_SetFrequency(f);
@@ -74,7 +65,10 @@ void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
         ResetRSSI();
         SYSTEM_DelayMs(10);
 
-        rssi_val[channel] = GetRssi();
+        int32_t rssi = (BK4819_GetRSSI() >> 1);
+        rssi -= 160;
+        rssi *= (-1);
+        rssi_val[channel] = rssi & 0xFF;
 
         USERAPPS_ranking_progress(channel / 2);
 
