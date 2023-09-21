@@ -26,6 +26,9 @@
 #include "misc.h"
 #include "settings.h"
 #include "ui/status.h"
+#include "external/printf/printf.h"
+#include "helper.h"
+#include "battery.h"
 
 void UI_DisplayStatus(void)
 {
@@ -33,21 +36,19 @@ void UI_DisplayStatus(void)
 	if (gCurrentFunction == FUNCTION_POWER_SAVE) {
 		memcpy(gStatusLine, BITMAP_PowerSave, sizeof(BITMAP_PowerSave));
 	}
-	if (gBatteryDisplayLevel < 2) {
-		if (gLowBatteryBlink == 1) {
-			memcpy(gStatusLine + 110, BITMAP_BatteryLevel1, sizeof(BITMAP_BatteryLevel1));
-		}
-	} else {
-		if (gBatteryDisplayLevel == 2) {
-			memcpy(gStatusLine + 110, BITMAP_BatteryLevel2, sizeof(BITMAP_BatteryLevel2));
-		} else if (gBatteryDisplayLevel == 3) {
-			memcpy(gStatusLine + 110, BITMAP_BatteryLevel3, sizeof(BITMAP_BatteryLevel3));
-		} else if (gBatteryDisplayLevel == 4) {
-			memcpy(gStatusLine + 110, BITMAP_BatteryLevel4, sizeof(BITMAP_BatteryLevel4));
-		} else {
-			memcpy(gStatusLine + 110, BITMAP_BatteryLevel5, sizeof(BITMAP_BatteryLevel5));
-		}
-	}
+
+#if defined(ENABLE_BATT_MODS)
+    UI_DisplayBattery(0);
+#else
+    if (gBatteryDisplayLevel < 2) {
+        if (gLowBatteryBlink == 1) {
+            UI_DisplayBattery(1);
+        }
+    } else {
+        UI_DisplayBattery(gBatteryDisplayLevel);
+    }
+#endif
+
 	if (gChargingWithTypeC) {
 		memcpy(gStatusLine + 100, BITMAP_USB_C, sizeof(BITMAP_USB_C));
 	}

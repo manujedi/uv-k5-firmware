@@ -24,6 +24,7 @@ set(ENABLE_OVERLAY 0)
 set(ENABLE_SWD 1)
 set(ENABLE_TX1750 1)
 set(ENABLE_UART 1)
+set(ENABLE_BATT_MODS 1) # Also saves space
 
 if (ENABLE_AIRCOPY)
     add_compile_definitions(ENABLE_AIRCOPY)
@@ -57,6 +58,9 @@ if (ENABLE_UART)
     add_compile_definitions(ENABLE_UART)
 endif ()
 
+if (ENABLE_BATT_MODS)
+    add_compile_definitions(ENABLE_BATT_MODS)
+endif ()
 
 # specify cross compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)

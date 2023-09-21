@@ -186,16 +186,13 @@ void UI_DisplayMenu(void)
 
 	memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
 
-	for (i = 0; i < 3; i++) {
-		if (gMenuCursor || i) {
-			if ((gMenuListCount - 1) != gMenuCursor || (i != 2)) {
-				UI_PrintString(MenuList[gMenuCursor + i - 1], 0, 127, i * 2, 8, false);
-			}
-		}
+	for (i = 0; i < 6; i++) {
+        if ((gMenuCursor + i) < (gMenuListCount)) {
+            UI_PrintStringSmall(MenuList[gMenuCursor + i], 0, 127, i, 8, false);
+        }
 	}
 	for (i = 0; i < 48; i++) {
-		gFrameBuffer[2][i] ^= 0xFF;
-		gFrameBuffer[3][i] ^= 0xFF;
+		gFrameBuffer[0][i] ^= 0xFF;
 	}
 	for (i = 0; i < 7; i++) {
 		gFrameBuffer[i][48] = 0xFF;
@@ -424,10 +421,10 @@ void UI_DisplayMenu(void)
 		break;
 	}
 
-	UI_PrintString(String, 50, 127, 2, 8, true);
+	UI_PrintStringSmall(String, 50, 127, 2, 8, true);
 
 	if (gMenuCursor == MENU_OFFSET) {
-		UI_PrintString("MHz", 50, 127, 4, 8, true);
+        UI_PrintStringSmall("MHz", 50, 127, 4, 8, true);
 	}
 
 	if ((gMenuCursor == MENU_RESET || gMenuCursor == MENU_MEM_CH || gMenuCursor == MENU_DEL_CH) && gAskForConfirmation) {
@@ -436,28 +433,28 @@ void UI_DisplayMenu(void)
 		} else {
 			strcpy(String, "WAIT!");
 		}
-		UI_PrintString(String, 50, 127, 4, 8, true);
+        UI_PrintStringSmall(String, 50, 127, 4, 8, true);
 	}
 
 	if ((gMenuCursor == MENU_R_CTCS || gMenuCursor == MENU_R_DCS) && gCssScanMode != CSS_SCAN_MODE_OFF) {
-		UI_PrintString("SCAN", 50, 127, 4, 8, true);
+        UI_PrintStringSmall("SCAN", 50, 127, 4, 8, true);
 	}
 
 	if (gMenuCursor == MENU_UPCODE) {
 		if (strlen(gEeprom.DTMF_UP_CODE) > 8) {
-			UI_PrintString(gEeprom.DTMF_UP_CODE + 8, 50, 127, 4, 8, true);
+            UI_PrintStringSmall(gEeprom.DTMF_UP_CODE + 8, 50, 127, 4, 8, true);
 		}
 	}
 	if (gMenuCursor == MENU_DWCODE) {
 		if (strlen(gEeprom.DTMF_DOWN_CODE) > 8) {
-			UI_PrintString(gEeprom.DTMF_DOWN_CODE + 8, 50, 127, 4, 8, true);
+            UI_PrintStringSmall(gEeprom.DTMF_DOWN_CODE + 8, 50, 127, 4, 8, true);
 		}
 	}
 	if (gMenuCursor == MENU_D_LIST && gIsDtmfContactValid) {
 		Contact[11] = 0;
 		memcpy(&gDTMF_ID, Contact + 8, 4);
 		sprintf(String, "ID:%s", Contact + 8);
-		UI_PrintString(String, 50, 127, 4, 8, true);
+        UI_PrintStringSmall(String, 50, 127, 4, 8, true);
 	}
 
 	if (gMenuCursor == MENU_R_CTCS || gMenuCursor == MENU_T_CTCS ||

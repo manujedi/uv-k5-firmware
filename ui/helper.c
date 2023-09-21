@@ -83,7 +83,10 @@ void UI_PrintStringSmall(const char *pString, uint8_t Start, uint8_t End, uint8_
     for (i = 0; i < Length; i++) {
         if (pString[i] >= ' ' && pString[i] < 0x7F) {
             uint8_t Index = pString[i];
-            memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontSmall[Index][0], 8);
+            if(Line < 7)
+                memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontSmall[Index][0], 8);
+            else
+                memcpy(gStatusLine + (i * Width) + Start, &gFontSmall[Index][0], 8);
         }
     }
 }
@@ -98,9 +101,7 @@ void UI_PrintString(const char *pString, uint8_t Start, uint8_t End, uint8_t Lin
 	}
 	for (i = 0; i < Length; i++) {
 		if (pString[i] >= ' ' && pString[i] < 0x7F) {
-			uint8_t Index = pString[i] - ' ';
-			memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, &gFontBig[Index][0], 8);
-			memcpy(gFrameBuffer[Line + 1] + (i * Width) + Start, &gFontBig[Index][8], 8);
+			memcpy(gFrameBuffer[Line + 0] + (i * Width) + Start, gFontSmall[(uint8_t)pString[i]], 8);
 		}
 	}
 }
@@ -145,7 +146,7 @@ void UI_DisplaySmallDigits(uint8_t Size, const char *pString, uint8_t X, uint8_t
 	uint8_t i;
 
 	for (i = 0; i < Size; i++) {
-		memcpy(gFrameBuffer[Y] + (i * 7) + X, gFontSmallDigits[(uint8_t)pString[i]], 7);
+		memcpy(gFrameBuffer[Y] + (i * 7) + X, gFontSmall[pString[i] + '0'], 7);
 	}
 }
 

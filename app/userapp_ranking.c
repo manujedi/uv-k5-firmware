@@ -27,34 +27,54 @@
 #include "misc.h"
 #include "driver/bk4819-regs.h"
 #include "driver/bk4819.h"
+#include "driver/systick.h"
+#include "driver/eeprom.h"
 
+//some code stolen from https://github.com/fagci/uv-k5-firmware-fagci-mod/blob/main/app/spectrum.c
+static void ResetRSSI() {
+    uint32_t Reg = BK4819_ReadRegister(BK4819_REG_30);
+    Reg &= ~1;
+    BK4819_WriteRegister(BK4819_REG_30, Reg);
+    Reg |= 1;
+    BK4819_WriteRegister(BK4819_REG_30, Reg);
+}
+
+
+uint8_t GetRssi() {
+    SYSTICK_DelayUs(10);
+    int32_t rssi = (BK4819_GetRSSI() >> 1);
+    rssi -= 160;
+    rssi *= (-1);
+    return rssi & 0xFF;
+}
+
+void setF(uint32_t f) {
+    BK4819_PickRXFilterPathBasedOnFrequency(f);
+    BK4819_SetFrequency(f);
+    //??? fagci does it
+    uint16_t reg = BK4819_ReadRegister(BK4819_REG_30);
+    BK4819_WriteRegister(BK4819_REG_30, 0);
+    BK4819_WriteRegister(BK4819_REG_30, reg);
+
+}
 
 void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
 
     for (uint8_t channel = 0; channel < 200; channel++) {
-        if(channel != 0 && RADIO_FindNextChannel(channel, RADIO_CHANNEL_UP, false, 0) == 0)
+        if (channel != 0 && RADIO_FindNextChannel(channel, RADIO_CHANNEL_UP, false, 0) == 0)
             continue;
 
         printf("c %i\r\n", channel);
 
-        gEeprom.MrChannel[gEeprom.TX_CHANNEL] = channel;
-        gEeprom.ScreenChannel[gEeprom.TX_CHANNEL] = channel;
-
-        RADIO_ConfigureChannel(0, VFO_CONFIGURE_RELOAD);
-        RADIO_SetupRegisters(true);
+        uint32_t Frequency;
+        EEPROM_ReadBuffer(channel * 16, &Frequency, 4);
+        setF(Frequency);
 
         //reset rssi (thanks to fagci)
-        uint32_t Reg = BK4819_ReadRegister(BK4819_REG_30);
-        Reg &= ~1;
-        BK4819_WriteRegister(BK4819_REG_30, Reg);
-        Reg |= 1;
-        BK4819_WriteRegister(BK4819_REG_30, Reg);
-
+        ResetRSSI();
         SYSTEM_DelayMs(10);
 
-        int32_t rssi = (((BK4819_GetRSSI() >> 1) & 0xFF) - 160) * -1;
-
-        rssi_val[channel] = rssi & 0xFF;
+        rssi_val[channel] = GetRssi();
 
         USERAPPS_ranking_progress(channel / 2);
 
@@ -133,7 +153,7 @@ void USERAPP_ranking_loop() {
                 updateUI = true;
                 break;
         }
-        if(updateUI)
+        if (updateUI)
             USERAPPS_ranking_draw(selection, rssi_val, min_rssi);
         updateUI = false;
         SYSTEM_DelayMs(10);

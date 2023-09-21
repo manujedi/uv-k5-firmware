@@ -20,6 +20,5 @@
 #include <stdint.h>
 
 void UI_DisplayBattery(uint8_t Level);
-
 #endif
 
