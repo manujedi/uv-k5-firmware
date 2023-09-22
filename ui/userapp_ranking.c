@@ -13,6 +13,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
+#if defined(ENABLE_CHANNEL_SCAN)
 
 #include "ui/userapps.h"
 #include "ui/userapp_ranking.h"
@@ -64,3 +65,5 @@ void USERAPPS_ranking_progress(uint8_t percent){
 
     ST7565_BlitFullScreen();
 }
+
+#endif

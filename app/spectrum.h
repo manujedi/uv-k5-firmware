@@ -1,5 +1,5 @@
-/* Copyright 2023 Dual Tachyon
- * https://github.com/DualTachyon
+/* Copyright 2023 Manuel Jedinger
+ * https://github.com/manujedi
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
  *     limitations under the License.
  */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef FIRMWARE_APP_SPECTRUM_H
+#define FIRMWARE_APP_SPECTRUM_H
 
-#include <stdbool.h>
-#include <stdint.h>
+#include <string.h>
+#include "stdint.h"
+#include "driver/keyboard.h"
+#include "app/userapps.h"
+#include "driver/bk4819.h"
+#include "external/printf/printf.h"
+#include "radio.h"
+#include "driver/eeprom.h"
+#include "driver/system.h"
 
-void BOARD_FLASH_Init(void);
-void BOARD_GPIO_Init(void);
-void BOARD_PORTCON_Init(void);
-void BOARD_ADC_Init(void);
-void BOARD_ADC_GetBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent);
-void BOARD_ADC_GetDieTemp(uint16_t *pTemp);
-void BOARD_Init(void);
-void BOARD_EEPROM_Init(void);
-void BOARD_EEPROM_LoadMoreSettings(void);
-void BOARD_FactoryReset(bool bIsAll);
-
+#if defined(ENABLE_MINIMAL_SPECTRUM)
+void spectrum_init(void);
+void spectrum_loop(void);
 #endif
 
+
+#endif //FIRMWARE_APP_SPECTRUM_H

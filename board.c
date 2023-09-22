@@ -40,6 +40,8 @@
 #include "helper/battery.h"
 #include "misc.h"
 #include "settings.h"
+#include "external/printf/printf.h"
+
 #if defined(ENABLE_OVERLAY)
 #include "sram-overlay.h"
 #endif
@@ -471,7 +473,7 @@ void BOARD_ADC_Init(void)
 	ADC_Config_t Config;
 
 	Config.CLK_SEL = SYSCON_CLK_SEL_W_SARADC_SMPL_VALUE_DIV2;
-	Config.CH_SEL = ADC_CH4 | ADC_CH9;
+	Config.CH_SEL = ADC_CH4 | ADC_CH9 | ADC_CH13;
 	Config.AVG = SARADC_CFG_AVG_VALUE_8_SAMPLE;
 	Config.CONT = SARADC_CFG_CONT_VALUE_SINGLE;
 	Config.MEM_MODE = SARADC_CFG_MEM_MODE_VALUE_CHANNEL;
@@ -498,6 +500,16 @@ void BOARD_ADC_GetBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent)
 	}
 	*pVoltage = ADC_GetValue(ADC_CH4);
 	*pCurrent = ADC_GetValue(ADC_CH9);
+	ADC_GetValue(ADC_CH13);
+}
+
+void BOARD_ADC_GetDieTemp(uint16_t *pTemp){
+    ADC_Start();
+
+    while (!ADC_CheckEndOfConversion(ADC_CH13)) {
+    }
+    uint16_t tmp =  ADC_GetValue(ADC_CH13);
+    *pTemp = tmp;
 }
 
 void BOARD_Init(void)

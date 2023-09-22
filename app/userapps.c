@@ -19,9 +19,23 @@
 #include "ui/userapps.h"
 #include "driver/system.h"
 #include "userapp_ranking.h"
+#include "app/spectrum.h"
+#include "board.h"
+#include "ui/helper.h"
+#include "driver/st7565.h"
 
-char menu_items[7][15] = {
+char menu_items[][15] = {
+#if defined(ENABLE_CHANNEL_SCAN)
         "Ranking",
+#else
+        "Not Enabled",
+#endif
+#if defined(ENABLE_MINIMAL_SPECTRUM)
+        "Spectrum",
+#else
+        "Not Enabled",
+#endif
+        "Temp",
 };
 
 KEY_Code_t USERAPPS_GetInput(void){
@@ -49,11 +63,45 @@ KEY_Code_t USERAPPS_GetInput(void){
     return KEY_INVALID;
 }
 
+void printTemp(){
+    KEY_Code_t key = KEY_INVALID;
+    uint8_t refresh = 0;
+
+    while (key != KEY_EXIT) {
+
+        key = USERAPPS_GetInput();
+
+        if (refresh == 0) {
+            uint16_t temp = 0;
+            BOARD_ADC_GetDieTemp(&temp);
+            char String[16];
+            sprintf(String, "%iV", temp);
+            memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
+            UI_PrintStringSmall(String, 0, 127, 1, 7, true);
+            ST7565_BlitFullScreen();
+        }
+
+        SYSTEM_DelayMs(10);
+        refresh = refresh == 0 ? 100 : refresh-1;
+
+    }
+}
+
+
 void USERAPPS_startapp(uint8_t selection){
     switch (selection) {
         case 0:
+#if defined(ENABLE_CHANNEL_SCAN)
             USERAPP_ranking_init();
+#endif
             break;
+        case 1:
+#if defined(ENABLE_MINIMAL_SPECTRUM)
+            spectrum_init();
+#endif
+            break;
+        case 2:
+            printTemp();
         default:
             break;
     }

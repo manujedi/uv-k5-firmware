@@ -14,19 +14,27 @@
  *     limitations under the License.
  */
 
-#ifndef FIRMWARE_APP_USERAPPS_RANKING_H
-#define FIRMWARE_APP_USERAPPS_RANKING_H
-#if defined(ENABLE_CHANNEL_SCAN)
-
-
-#include <string.h>
-#include "stdint.h"
-#include "driver/keyboard.h"
+#ifndef FIRMWARE_RADIO_HELPER_H
+#define FIRMWARE_RADIO_HELPER_H
+#include "radio_helper.h"
 #include "app/userapps.h"
+#include "app/userapp_ranking.h"
+#include "ui/userapp_ranking.h"
+#include "driver/keyboard.h"
+#include "ui/userapps.h"
+#include "driver/system.h"
+#include "radio.h"
+#include "driver/uart.h"
+#include "external/printf/printf.h"
+#include "settings.h"
+#include "misc.h"
+#include "driver/bk4819-regs.h"
+#include "driver/bk4819.h"
+#include "driver/systick.h"
+#include "driver/eeprom.h"
 
-void USERAPP_ranking_init(void);
-void USERAPP_ranking_loop(void);
+//some code stolen from https://github.com/fagci/uv-k5-firmware-fagci-mod/blob/main/app/spectrum.c
+void setF(uint32_t f);
+void ResetRSSI();
 
-#endif
-
-#endif //FIRMWARE_APP_USERAPPS_RANKING_H
+#endif //FIRMWARE_RADIO_HELPER_H

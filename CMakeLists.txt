@@ -25,6 +25,8 @@ set(ENABLE_SWD 1)
 set(ENABLE_TX1750 1)
 set(ENABLE_UART 1)
 set(ENABLE_BATT_MODS 1) # Also saves space
+set(ENABLE_CHANNEL_SCAN 0)
+set(ENABLE_MINIMAL_SPECTRUM 0)
 
 if (ENABLE_AIRCOPY)
     add_compile_definitions(ENABLE_AIRCOPY)
@@ -62,6 +64,15 @@ if (ENABLE_BATT_MODS)
     add_compile_definitions(ENABLE_BATT_MODS)
 endif ()
 
+if (ENABLE_CHANNEL_SCAN)
+    add_compile_definitions(ENABLE_CHANNEL_SCAN)
+endif ()
+
+if (ENABLE_MINIMAL_SPECTRUM)
+    add_compile_definitions(ENABLE_MINIMAL_SPECTRUM)
+endif ()
+
+
 # specify cross compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
@@ -92,6 +103,7 @@ add_compile_options(-mcpu=${MCPU} -Wall -Werror -fno-builtin -MMD -fno-delete-nu
 add_compile_options(-DPRINTF_INCLUDE_CONFIG_H)
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/firmware.ld)
+
 add_link_options(-mcpu=${MCPU} -nostartfiles -Wl,-T ${LINKER_SCRIPT})
 
 add_compile_options(-DGIT_HASH=\"${GIT_HASH}\")

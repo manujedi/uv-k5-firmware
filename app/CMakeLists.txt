@@ -19,6 +19,7 @@ if (ENABLE_UART)
             ${CMAKE_CURRENT_SOURCE_DIR}/uart.c
     )
 endif ()
+
 target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/action.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app.c
@@ -27,6 +28,7 @@ target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/main.c
         ${CMAKE_CURRENT_SOURCE_DIR}/menu.c
         ${CMAKE_CURRENT_SOURCE_DIR}/scanner.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/spectrum.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapps.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapp_ranking.c
 )

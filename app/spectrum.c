@@ -14,64 +14,60 @@
  *     limitations under the License.
  */
 
-#include "app/userapps.h"
-#include "app/userapp_ranking.h"
-#include "ui/userapp_ranking.h"
-#include "driver/keyboard.h"
-#include "ui/userapps.h"
-#include "driver/system.h"
-#include "radio.h"
-#include "driver/uart.h"
-#include "external/printf/printf.h"
-#include "settings.h"
-#include "misc.h"
-#include "driver/bk4819-regs.h"
-#include "driver/bk4819.h"
-#include "driver/systick.h"
-#include "driver/eeprom.h"
+#include "app/spectrum.h"
+#include "ui/spectrum.h"
 #include "helper/radio_helper.h"
 
-#if defined(ENABLE_CHANNEL_SCAN)
-void USERAPP_ranking_readChannelFreq(uint8_t rssi_val[200]) {
+#if defined(ENABLE_MINIMAL_SPECTRUM)
+void spectrumMessure(uint8_t *rssi_val, uint32_t freq) {
 
-    for (uint8_t channel = 0; channel < 200; channel++) {
-        if (channel != 0 && RADIO_FindNextChannel(channel, RADIO_CHANNEL_UP, false, 0) == 0)
-            continue;
+    BK4819_PickRXFilterPathBasedOnFrequency(freq);
+    setF(freq);
 
-        printf("c %i\r\n", channel);
+    ResetRSSI();
+    SYSTEM_DelayMs(10);
 
-        uint32_t Frequency;
-        EEPROM_ReadBuffer(channel * 16, &Frequency, 4);
-        setF(Frequency);
+    int32_t rssi = (BK4819_GetRSSI() >> 1);
+    rssi -= 160;
+    rssi *= (-1);
+    *rssi_val = rssi & 0xFF;
 
-        //reset rssi (thanks to fagci)
-        ResetRSSI();
-        SYSTEM_DelayMs(10);
+}
 
-        int32_t rssi = (BK4819_GetRSSI() >> 1);
-        rssi -= 160;
-        rssi *= (-1);
-        rssi_val[channel] = rssi & 0xFF;
+uint32_t pow10(uint8_t exponent) {
+    uint32_t ret = 1;
+    for (uint8_t i = 0; i < exponent; ++i)
+        ret *= 10;
+    return ret;
+}
 
-        USERAPPS_ranking_progress(channel / 2);
-
+uint8_t log10(uint32_t val) {
+    uint8_t ret = 0;
+    val /= 10;
+    while (val) {
+        ret++;
+        val /= 10;
     }
+    return ret;
 }
 
 
-void USERAPP_ranking_init() {
-    USERAPP_ranking_loop();
+void spectrum_init() {
+    spectrum_loop();
 }
 
-void USERAPP_ranking_loop() {
+void spectrum_loop() {
 
     KEY_Code_t key = KEY_INVALID;
 
-    uint8_t rssi_val[200];
+    uint8_t rssi_val[56];
+    uint8_t i = 0;
+
     memset(rssi_val, 0xFF, sizeof(rssi_val));
 
-    uint8_t selection = 0;
-    uint8_t min_rssi = 100;
+    uint32_t Frequency = 45000000;
+    uint32_t FrequencyStep = 100;
+
     bool updateUI = true;
 
     while (key != KEY_EXIT) {
@@ -82,7 +78,8 @@ void USERAPP_ranking_loop() {
             case KEY_0:
                 break;
             case KEY_1:
-                min_rssi -= 5;
+                if (FrequencyStep < 1000000)
+                    FrequencyStep += pow10(log10(FrequencyStep));
                 updateUI = true;
                 break;
             case KEY_2:
@@ -96,7 +93,8 @@ void USERAPP_ranking_loop() {
             case KEY_6:
                 break;
             case KEY_7:
-                min_rssi += 5;
+                if (FrequencyStep > 1)
+                    FrequencyStep -= pow10(log10(FrequencyStep)-1);
                 updateUI = true;
                 break;
             case KEY_8:
@@ -104,11 +102,11 @@ void USERAPP_ranking_loop() {
             case KEY_9:
                 break;
             case KEY_UP:
-                selection = selection == 0 ? 0 : selection - 1;
+                Frequency -= FrequencyStep;
                 updateUI = true;
                 break;
             case KEY_DOWN:
-                selection = selection == 199 ? 199 : selection + 1;
+                Frequency += FrequencyStep;
                 updateUI = true;
                 break;
             case KEY_EXIT:
@@ -126,15 +124,22 @@ void USERAPP_ranking_loop() {
             case KEY_INVALID:
                 break;
             case KEY_MENU:
-                USERAPP_ranking_readChannelFreq(rssi_val);
-                updateUI = true;
                 break;
         }
-        if (updateUI)
-            USERAPPS_ranking_draw(selection, rssi_val, min_rssi);
-        updateUI = false;
-        SYSTEM_DelayMs(10);
+
+        spectrumMessure(&rssi_val[i], Frequency + (FrequencyStep * i));
+
+        i++;
+        if (i >= 56) {
+            i = 0;
+            spectrum_drawSpectrum(rssi_val, Frequency, FrequencyStep);
+        }
+
+        if (updateUI) {
+            spectrum_drawUI(Frequency, FrequencyStep);
+            updateUI = false;
+        }
+
     }
 }
-
 #endif

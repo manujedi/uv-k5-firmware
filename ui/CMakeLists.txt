@@ -26,6 +26,7 @@ target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/status.c
         ${CMAKE_CURRENT_SOURCE_DIR}/ui.c
         ${CMAKE_CURRENT_SOURCE_DIR}/welcome.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/spectrum.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapps.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapp_ranking.c
 )
