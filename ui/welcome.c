@@ -44,9 +44,9 @@ void UI_DisplayWelcome(void)
 			EEPROM_ReadBuffer(0x0EB0, WelcomeString0, 16);
 			EEPROM_ReadBuffer(0x0EC0, WelcomeString1, 16);
 		}
-		UI_PrintString(WelcomeString0, 0, 127, 1, 10, true);
-		UI_PrintString(WelcomeString1, 0, 127, 3, 10, true);
-		UI_PrintString(Version, 0, 127, 5, 10, true);
+        UI_PrintStringSmall(WelcomeString0, 0, 127, 1, 10, true);
+        UI_PrintStringSmall(WelcomeString1, 0, 127, 3, 10, true);
+        UI_PrintStringSmall(Version, 0, 127, 5, 10, true);
 		ST7565_BlitStatusLine();
 		ST7565_BlitFullScreen();
 	}

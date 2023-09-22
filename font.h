@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 
-extern const uint8_t gFontSmall[128][8];
+extern const uint8_t gFontSmall[128 - 32][8];
 extern const uint8_t gFontBigDigits[11][26];
 
 #endif

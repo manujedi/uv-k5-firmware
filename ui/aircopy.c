@@ -37,7 +37,7 @@ void UI_DisplayAircopy(void)
 	} else {
 		strcpy(String, "AIR COPY(CMP)");
 	}
-	UI_PrintString(String, 2, 127, 0, 8, true);
+    UI_PrintStringSmall(String, 2, 127, 0, 8, true);
 
 	if (gInputBoxIndex == 0) {
 		NUMBER_ToDigits(gRxVfo->ConfigRX.Frequency, String);
@@ -54,7 +54,7 @@ void UI_DisplayAircopy(void)
 	} else if (gAirCopyIsSendMode == 1) {
 		sprintf(String, "SND:%d", gAirCopyBlockNumber);
 	}
-	UI_PrintString(String, 2, 127, 4, 8, true);
+    UI_PrintStringSmall(String, 2, 127, 4, 8, true);
 	ST7565_BlitFullScreen();
 }
 

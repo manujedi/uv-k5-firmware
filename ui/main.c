@@ -26,6 +26,7 @@
 #include "ui/helper.h"
 #include "ui/inputbox.h"
 #include "ui/main.h"
+#include "font.h"
 
 void UI_DisplayMain(void)
 {
@@ -34,8 +35,8 @@ void UI_DisplayMain(void)
 
 	memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
 	if (gEeprom.KEY_LOCK && gKeypadLocked) {
-		UI_PrintString("Long Press #", 0, 127, 1, 8, true);
-		UI_PrintString("To Unlock", 0, 127, 3, 8, true);
+        UI_PrintStringSmall("Long Press #", 0, 127, 1, 8, true);
+        UI_PrintStringSmall("To Unlock", 0, 127, 3, 8, true);
 		ST7565_BlitFullScreen();
 		return;
 	}
@@ -91,7 +92,7 @@ void UI_DisplayMain(void)
 				} else {
 					sprintf(String, ">%s", gDTMF_InputBox);
 				}
-				UI_PrintString(String, 2, 127, i * 3, 8, false);
+                UI_PrintStringSmall(String, 2, 127, i * 3, 8, false);
 
 				memset(String, 0, sizeof(String));
 				memset(Contact, 0, sizeof(Contact));
@@ -113,7 +114,7 @@ void UI_DisplayMain(void)
 						sprintf(String, ">%s", gDTMF_String);
 					}
 				}
-				UI_PrintString(String, 2, 127, 2 + (i * 3), 8, false);
+                UI_PrintStringSmall(String, 2, 127, 2 + (i * 3), 8, false);
 				continue;
 			} else if (bIsSameVfo) {
 				memcpy(pLine0 + 2, BITMAP_VFO_Default, sizeof(BITMAP_VFO_Default));
@@ -225,7 +226,7 @@ void UI_DisplayMain(void)
 				Width = 8;
 				break;
 			}
-			UI_PrintString(String, 31, 111, i * 4, Width, true);
+            UI_PrintStringSmall(String, 31, 111, i * 4, Width, true);
 		} else {
 			if (gInputBoxIndex && IS_FREQ_CHANNEL(gEeprom.ScreenChannel[i]) && gEeprom.TX_CHANNEL == i) {
 				UI_DisplayFrequency(gInputBox, 31, i * 4, true, false);
@@ -261,14 +262,14 @@ void UI_DisplayMain(void)
 						break;
 					case MDF_CHANNEL:
 						sprintf(String, "CH-%03d", gEeprom.ScreenChannel[i] + 1);
-						UI_PrintString(String, 31, 112, i * 4, 8, true);
+                        UI_PrintStringSmall(String, 31, 112, i * 4, 8, true);
 						break;
 					case MDF_NAME:
 						if(gEeprom.VfoInfo[i].Name[0] == 0 || gEeprom.VfoInfo[i].Name[0] == 0xFF) {
 							sprintf(String, "CH-%03d", gEeprom.ScreenChannel[i] + 1);
-							UI_PrintString(String, 31, 112, i * 4, 8, true);
+                            UI_PrintStringSmall(String, 31, 112, i * 4, 8, true);
 						} else {
-							UI_PrintString(gEeprom.VfoInfo[i].Name, 31, 112, i * 4, 8, true);
+                            UI_PrintStringSmall(gEeprom.VfoInfo[i].Name, 31, 112, i * 4, 8, true);
 						}
 						break;
 					}
@@ -379,10 +380,10 @@ void UI_DisplayMain(void)
 
 		if (gEeprom.VfoInfo[i].ConfigRX.Frequency != gEeprom.VfoInfo[i].ConfigTX.Frequency) {
 			if (gEeprom.VfoInfo[i].FREQUENCY_DEVIATION_SETTING == FREQUENCY_DEVIATION_ADD) {
-				memcpy(pLine1 + 128 + 54, BITMAP_Add, sizeof(BITMAP_Add));
+                UI_PrintStringSmall("+", 80, 127, 2, 7, false);
 			}
 			if (gEeprom.VfoInfo[i].FREQUENCY_DEVIATION_SETTING == FREQUENCY_DEVIATION_SUB) {
-				memcpy(pLine1 + 128 + 54, BITMAP_Sub, sizeof(BITMAP_Sub));
+                UI_PrintStringSmall("-", 80, 127, 2, 7, false);
 			}
 
 		}
