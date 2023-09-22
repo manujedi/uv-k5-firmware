@@ -23,6 +23,7 @@
 #include "board.h"
 #include "ui/helper.h"
 #include "driver/st7565.h"
+#include "misc.h"
 
 char menu_items[][15] = {
 #if defined(ENABLE_CHANNEL_SCAN)
@@ -72,12 +73,19 @@ void printTemp(){
         key = USERAPPS_GetInput();
 
         if (refresh == 0) {
-            uint16_t temp = 0;
-            BOARD_ADC_GetDieTemp(&temp);
-            char String[16];
-            sprintf(String, "%iV", temp);
+            uint16_t raw = 0;
+            int16_t temp = 0;
+            BOARD_ADC_GetDieTemp(&temp, &raw);
+
             memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
+            char String[16];
+
+            sprintf(String, "%i.%iC", temp/10, temp%10);
             UI_PrintStringSmall(String, 0, 127, 1, 7, true);
+
+            sprintf(String, "ADC: %i", raw);
+            UI_PrintStringSmall(String, 0, 127, 2, 7, true);
+
             ST7565_BlitFullScreen();
         }
 
@@ -110,6 +118,7 @@ void USERAPPS_startapp(uint8_t selection){
 
 void USERAPPS_init(void){
     USERAPPS_loop();
+    gUpdateDisplay=true;
 }
 
 void USERAPPS_loop(void){

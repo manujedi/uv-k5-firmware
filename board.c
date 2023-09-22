@@ -503,12 +503,16 @@ void BOARD_ADC_GetBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent)
 	ADC_GetValue(ADC_CH13);
 }
 
-void BOARD_ADC_GetDieTemp(uint16_t *pTemp){
+void BOARD_ADC_GetDieTemp(int16_t *pTemp, uint16_t *rawVal){
     ADC_Start();
 
     while (!ADC_CheckEndOfConversion(ADC_CH13)) {
     }
-    uint16_t tmp =  ADC_GetValue(ADC_CH13);
+    *rawVal = ADC_GetValue(ADC_CH13);
+    int16_t tmp = *rawVal;
+    tmp = 1990 - tmp;       //1990 at 0 degree, 1900 at 22.5 -> 4 steps per degree
+    tmp *= 10;
+    tmp /= 4;
     *pTemp = tmp;
 }
 
