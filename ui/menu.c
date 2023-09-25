@@ -25,7 +25,7 @@
 #include "settings.h"
 #include "ui/helper.h"
 #include "ui/inputbox.h"
-#include "ui/menu.h"
+#include "ui/menu_new.h"
 #include "ui/ui.h"
 
 static const char MenuList[][7] = {
@@ -186,22 +186,21 @@ void UI_DisplayMenu(void)
 
 	memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < 5; i++) {
         if ((gMenuCursor + i) < (gMenuListCount)) {
-            UI_PrintStringSmall(MenuList[gMenuCursor + i], 0, 127, i, 8, false);
+            UI_PrintStringSmall(MenuList[gMenuCursor + i], 0, 127, i+1, 8, false);
         }
 	}
 	for (i = 0; i < 48; i++) {
-		gFrameBuffer[0][i] ^= 0xFF;
+		gFrameBuffer[1][i] ^= 0xFF;
 	}
-	for (i = 0; i < 7; i++) {
+	for (i = 1; i < 7; i++) {
 		gFrameBuffer[i][48] = 0xFF;
-		gFrameBuffer[i][49] = 0xFF;
 	}
 	NUMBER_ToDigits(gMenuCursor + 1, String);
 	UI_DisplaySmallDigits(2, String + 6, 33, 6);
 	if (gIsInSubMenu) {
-		memcpy(gFrameBuffer[0] + 50, BITMAP_CurrentIndicator, sizeof(BITMAP_CurrentIndicator));
+		memcpy(gFrameBuffer[1] + 50, BITMAP_CurrentIndicator, sizeof(BITMAP_CurrentIndicator));
 	}
 
 	memset(String, 0, sizeof(String));

@@ -28,7 +28,7 @@
 #include "ui/fmradio.h"
 #include "ui/inputbox.h"
 #include "ui/main.h"
-#include "ui/menu.h"
+#include "ui/menu_new.h"
 #include "ui/scanner.h"
 #include "ui/ui.h"
 

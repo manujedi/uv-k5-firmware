@@ -18,7 +18,7 @@
 #include "driver/backlight.h"
 #include "misc.h"
 #include "ui/battery.h"
-#include "ui/menu.h"
+#include "ui/menu_new.h"
 #include "ui/ui.h"
 
 uint16_t gBatteryCalibration[6];

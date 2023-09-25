@@ -17,7 +17,8 @@
 
 #if defined(ENABLE_MINIMAL_SPECTRUM)
 void spectrum_drawUI(uint32_t Frequency, uint32_t FrequencyStep);
-void spectrum_drawSpectrum(uint8_t rssi_val[56], uint32_t Frequency, uint32_t FrequencyStep);
+void spectrum_drawSpectrum(uint8_t rssi_val[56], uint32_t Frequency, uint32_t FrequencyStep, uint8_t min, uint8_t max);
+void spectrum_drawMinMaxDB(uint8_t* rssi_min, uint8_t* rssi_max);
 #endif
 
 #endif //FIRMWARE_UI_SPECTRUM_H

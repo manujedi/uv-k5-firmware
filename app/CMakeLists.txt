@@ -26,7 +26,8 @@ target_sources(firmware.elf PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/dtmf.c
         ${CMAKE_CURRENT_SOURCE_DIR}/generic.c
         ${CMAKE_CURRENT_SOURCE_DIR}/main.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/menu.c
+ #       ${CMAKE_CURRENT_SOURCE_DIR}/menu.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/menu_new.c
         ${CMAKE_CURRENT_SOURCE_DIR}/scanner.c
         ${CMAKE_CURRENT_SOURCE_DIR}/spectrum.c
         ${CMAKE_CURRENT_SOURCE_DIR}/userapps.c

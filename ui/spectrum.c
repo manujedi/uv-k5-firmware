@@ -49,20 +49,30 @@ void spectrum_drawUI(uint32_t Frequency, uint32_t FrequencyStep) {
     ST7565_BlitStatusLine();
 }
 
-void spectrum_drawSpectrum(uint8_t rssi_val[56], uint32_t Frequency, uint32_t FrequencyStep) {
+void spectrum_drawSpectrum(uint8_t rssi_val[56], uint32_t Frequency, uint32_t FrequencyStep, uint8_t min, uint8_t max) {
     memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
 
-    uint8_t max = 0;
-    uint8_t min = -1;
-    uint8_t max_index = -1;
+    uint8_t line;
+    uint8_t bit;
+    uint8_t tmp;
+    uint8_t max_index = 0;
+    uint8_t max_measurement = 0xFF;
+    uint8_t diff = max - min;
 
     for (uint8_t i = 0; i < 56; ++i) {
-        if (rssi_val[i] > max)
-            max = rssi_val[i];
-        if (rssi_val[i] < min) {
-            min = rssi_val[i];
-            max_index = i;      //rssi is negativ
+        line = i / 8;
+        bit = i % 8;
+
+        tmp = max - rssi_val[i];
+        tmp = (50 * tmp) / diff;
+        for (uint8_t j = 0; j < tmp; ++j) {
+            gFrameBuffer[line][j] |= (1 << bit);
         }
+        if(max_measurement < rssi_val[i]){
+            max_measurement = rssi_val[i];
+            max_index = i;
+        }
+
     }
 
     char String[16];
@@ -71,26 +81,18 @@ void spectrum_drawSpectrum(uint8_t rssi_val[56], uint32_t Frequency, uint32_t Fr
     UI_PrintStringSmall(String, 70, 127, 3, 7, false);
 
 
-    uint8_t diff = max - min;
-    uint8_t tmp;
-    uint8_t line = max_index / 8;
-    uint8_t bit = max_index % 8;
+    line = max_index / 8;
+    bit = max_index % 8;
 
     for (uint8_t j = 54; j < 60; ++j) {
         gFrameBuffer[line][j] |= (1 << bit);
     }
 
-    for (uint8_t i = 0; i < 56; ++i) {
-        line = i / 8;
-        bit = i % 8;
-        tmp = max - rssi_val[i];
-        tmp = (50 * tmp) / diff;
-        for (uint8_t j = 0; j < tmp; ++j) {
-            gFrameBuffer[line][j] |= (1 << bit);
-        }
-    }
-
     spectrum_drawUI(Frequency, FrequencyStep);
+}
+
+void spectrum_drawMinMaxDB(uint8_t* rssi_min, uint8_t* rssi_max) {
+    memset(gFrameBuffer, 0, sizeof(gFrameBuffer));
 }
 
 #endif

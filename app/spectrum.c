@@ -41,7 +41,7 @@ uint32_t pow10(uint8_t exponent) {
     return ret;
 }
 
-uint8_t log10(uint32_t val) {
+uint8_t log10_internal(uint32_t val) {
     uint8_t ret = 0;
     val /= 10;
     while (val) {
@@ -62,6 +62,9 @@ void spectrum_loop() {
 
     uint8_t rssi_val[56];
     uint8_t i = 0;
+    //original negativ values
+    uint8_t rssi_min = 100;
+    uint8_t rssi_max = 50;
 
     memset(rssi_val, 0xFF, sizeof(rssi_val));
 
@@ -79,12 +82,14 @@ void spectrum_loop() {
                 break;
             case KEY_1:
                 if (FrequencyStep < 1000000)
-                    FrequencyStep += pow10(log10(FrequencyStep));
+                    FrequencyStep += pow10(log10_internal(FrequencyStep));
                 updateUI = true;
                 break;
             case KEY_2:
+                rssi_min += 1;
                 break;
             case KEY_3:
+                rssi_max += 1;
                 break;
             case KEY_4:
                 break;
@@ -94,12 +99,14 @@ void spectrum_loop() {
                 break;
             case KEY_7:
                 if (FrequencyStep > 1)
-                    FrequencyStep -= pow10(log10(FrequencyStep)-1);
+                    FrequencyStep -= pow10(log10_internal(FrequencyStep)-1);
                 updateUI = true;
                 break;
             case KEY_8:
+                rssi_min -= 1;
                 break;
             case KEY_9:
+                rssi_max -= 1;
                 break;
             case KEY_UP:
                 Frequency -= FrequencyStep;
@@ -132,7 +139,7 @@ void spectrum_loop() {
         i++;
         if (i >= 56) {
             i = 0;
-            spectrum_drawSpectrum(rssi_val, Frequency, FrequencyStep);
+            spectrum_drawSpectrum(rssi_val, Frequency, FrequencyStep, rssi_min, rssi_max);
         }
 
         if (updateUI) {

@@ -24,7 +24,7 @@
 #include "misc.h"
 #include "radio.h"
 #include "settings.h"
-#include "ui/menu.h"
+#include "ui/menu_new.h"
 #include "ui/ui.h"
 
 BOOT_Mode_t BOOT_GetMode(void)

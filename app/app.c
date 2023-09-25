@@ -26,7 +26,7 @@
 #endif
 #include "app/generic.h"
 #include "app/main.h"
-#include "app/menu.h"
+#include "app/menu_new.h"
 #include "app/scanner.h"
 #if defined(ENABLE_UART)
 #include "app/uart.h"
@@ -57,7 +57,6 @@
 #endif
 #include "ui/battery.h"
 #include "ui/inputbox.h"
-#include "ui/menu.h"
 #include "ui/rssi.h"
 #include "ui/status.h"
 #include "ui/ui.h"

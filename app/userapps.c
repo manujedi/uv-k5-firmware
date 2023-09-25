@@ -131,8 +131,6 @@ void USERAPPS_loop(void){
         key = USERAPPS_GetInput();
 
         switch (key) {
-            case KEY_0 ... KEY_9:
-                break;
             case KEY_UP:
                 selection = selection == 0 ? 0 : selection - 1;
                 break;
@@ -140,22 +138,10 @@ void USERAPPS_loop(void){
                 if(selection < sizeof(menu_items)/sizeof(menu_items[0]) - 1)
                     selection++;
                 break;
-            case KEY_EXIT:
-                break;
-            case KEY_STAR:
-                break;
-            case KEY_F:
-                break;
-            case KEY_PTT:
-                break;
-            case KEY_SIDE2:
-                break;
-            case KEY_SIDE1:
-                break;
-            case KEY_INVALID:
-                break;
             case KEY_MENU:
                 USERAPPS_startapp(selection);
+                break;
+            default:
                 break;
         }
 

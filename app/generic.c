@@ -19,7 +19,7 @@
 #include "app/fm.h"
 #endif
 #include "app/generic.h"
-#include "app/menu.h"
+#include "app/menu_new.h"
 #include "app/scanner.h"
 #include "audio.h"
 #include "driver/keyboard.h"
